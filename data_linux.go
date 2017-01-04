@@ -12,6 +12,6 @@ func printData() {
 	}
 
 	for _, s := range stat.CPUStats {
-	    log.Infof("%v", s)
+	    log.Infof("%#v", s)
 	}
 }
