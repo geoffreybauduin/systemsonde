@@ -3,10 +3,16 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "d4oPLXukgz+dbGX3IqfTDomjnns=",
-			"path": "github.com/c9s/goprocinfo/linux",
-			"revision": "19cb9f127a9c8d2034cf59ccb683cdb94b9deb6c",
-			"revisionTime": "2015-10-25T19:11:53Z"
+			"checksumSHA1": "ujFjoR6H3TDeiuY9kvvwSwBMcJk=",
+			"path": "github.com/shirou/gopsutil/cpu",
+			"revision": "93564b314264efac01934715fad4c355ed6af1c5",
+			"revisionTime": "2017-01-02T05:11:51Z"
+		},
+		{
+			"checksumSHA1": "F4xYQ60JlmamCUSCJl7zuuq58Kw=",
+			"path": "github.com/shirou/gopsutil/internal/common",
+			"revision": "93564b314264efac01934715fad4c355ed6af1c5",
+			"revisionTime": "2017-01-02T05:11:51Z"
 		},
 		{
 			"checksumSHA1": "n9ab10xa//8gFwwD/wCXywBUrlo=",
