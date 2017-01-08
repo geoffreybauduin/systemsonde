@@ -1,0 +1,31 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "ujFjoR6H3TDeiuY9kvvwSwBMcJk=",
+			"path": "github.com/shirou/gopsutil/cpu",
+			"revision": "93564b314264efac01934715fad4c355ed6af1c5",
+			"revisionTime": "2017-01-02T05:11:51Z"
+		},
+		{
+			"checksumSHA1": "F4xYQ60JlmamCUSCJl7zuuq58Kw=",
+			"path": "github.com/shirou/gopsutil/internal/common",
+			"revision": "93564b314264efac01934715fad4c355ed6af1c5",
+			"revisionTime": "2017-01-02T05:11:51Z"
+		},
+		{
+			"checksumSHA1": "78rJTxxpeX87VtAo1PPQBPz9x/U=",
+			"path": "github.com/shirou/gopsutil/mem",
+			"revision": "93564b314264efac01934715fad4c355ed6af1c5",
+			"revisionTime": "2017-01-02T05:11:51Z"
+		},
+		{
+			"checksumSHA1": "n9ab10xa//8gFwwD/wCXywBUrlo=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "881bee4e20a5d11a6a88a5667c6f292072ac1963",
+			"revisionTime": "2016-12-02T02:35:07Z"
+		}
+	],
+	"rootPath": "github.com/lght/systemsonde"
+}
