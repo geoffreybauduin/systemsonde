@@ -2,18 +2,36 @@ package data
 
 import (
 	log "github.com/sirupsen/logrus"
-	"encoding/json"
 	"github.com/lght/systemsonde/data/cpu"
+	"github.com/lght/systemsonde/data/memory"
+	"time"
 )
 
-func Print() {
+// Get returns the data collected for further use
+func Get() (*Data, error) {
+	data := &Data{}
+	data.Timestamp = time.Now()
 	cpuData, err := cpu.Retrieve()
 	if err != nil {
-		log.Fatalf("Cannot retrieve cpu stats: %e", err)
+		return nil, err
 	}
-	data, err := json.MarshalIndent(cpuData, "", "    ")
+	data.CPU = cpuData
+	memoryData, err := memory.Retrieve()
 	if err != nil {
-		log.Fatalf("stat read fail: %e", err)
+		return nil, err
 	}
-	log.Infof("%s", data)
+	data.Memory = memoryData
+	return data, nil
+}
+
+// Print prints on the stdout the data collected
+func Print() error {
+	data, err := Get()
+	if err != nil {
+		return err
+	}
+	log.WithFields(log.Fields{
+		"data": data,
+	}).Info("Data")
+	return nil
 }

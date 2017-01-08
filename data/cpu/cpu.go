@@ -7,8 +7,7 @@ import (
 type CPU struct {
 	Count        uint64        `json:"count"`
 	LogicalCount uint64        `json:"logical_count"`
-	Global       *CPUStat      `json:"global"`
-	CPUS         []*CPUStat    `json:"cpus"`
+	CPUByName    map[string]*CPUStat    `json:"cpu_by_name"`
 }
 
 type CPUStat struct {
@@ -24,12 +23,26 @@ type CPUStat struct {
 	Guest     float64 `json:"guest"`
 	GuestNice float64 `json:"guest_nice"`
 	Stolen    float64 `json:"stolen"`
-	Load	  float64 `json:"load"`
+	Load      float64 `json:"load"`
 }
 
+var lastCallStatPerCPU map[string]*CPUStat
+
+func init() {
+	lastCallStatPerCPU = map[string]*CPUStat{}
+	cpuDatas, err := getCPUData()
+	if err != nil {
+		panic(err)
+	}
+	for _, cpuData := range cpuDatas {
+		lastCallStatPerCPU[cpuData.CPU] = cpuData
+	}
+}
+
+// Retrieve retrieves the last metrics on the CPU
 func Retrieve() (*CPU, error) {
 	cpuData := &CPU{
-		CPUS: []*CPUStat{},
+		CPUByName: map[string]*CPUStat{},
 	}
 	cpuCount, err := cpu.Counts(true)
 	if err != nil {
@@ -41,20 +54,47 @@ func Retrieve() (*CPU, error) {
 		return nil, err
 	}
 	cpuData.Count = uint64(cpuCount)
+	cpus, err := getCPUData()
+	if err != nil {
+		return nil, err
+	}
+	for _, c := range cpus {
+		c.Load = getLoadFor(c)
+		lastCallStatPerCPU[c.CPU] = c
+		cpuData.CPUByName[c.CPU] = c
+	}
+	return cpuData, nil
+}
+
+func getCPUData() ([]*CPUStat, error) {
+	cpuDatas := []*CPUStat{}
 	cpuTimes, err := cpu.Times(true)
 	if err != nil {
 		return nil, err
 	}
-	cpuPercent, err := cpu.Percent(0, true)
-	if err != nil {
-		return nil, err
-	}
-	for i, cpuTime := range cpuTimes {
+	for _, cpuTime := range cpuTimes {
 		singleCpu := getSingleCPUData(&cpuTime)
-		singleCpu.Load = cpuPercent[i] / 100.0
-		cpuData.CPUS = append(cpuData.CPUS, singleCpu)
+		cpuDatas = append(cpuDatas, singleCpu)
 	}
-	return cpuData, nil
+	return cpuDatas, nil
+}
+
+func getLoadFor(c *CPUStat) (float64) {
+	t1All, t1Busy := getCpuTime(lastCallStatPerCPU[c.CPU])
+	t2All, t2Busy := getCpuTime(c)
+	if t2Busy <= t1Busy {
+		return 0
+	}
+	if t2All <= t1All {
+		return 1
+	}
+	return (t2Busy - t1Busy) / (t2All - t1All)
+}
+
+func getCpuTime(c *CPUStat) (float64, float64) {
+	busy := c.User + c.System + c.Nice + c.IOWait + c.Irq +
+	c.SoftIrq + c.Steal + c.Guest + c.GuestNice + c.Stolen
+	return busy + c.Idle, busy
 }
 
 func getSingleCPUData(cpuTime *cpu.TimesStat) *CPUStat {
